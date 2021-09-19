@@ -20,6 +20,8 @@ import {
   Texture,
   Group,
   Object3D,
+  Vector2,
+  ClampToEdgeWrapping,
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
@@ -40,6 +42,7 @@ import {
 } from './Resource/Models';
 import { initStatsUtils } from './Comps/StatsUtilities';
 import { initTweakUtils } from './Comps/TweakUtilities';
+import * as manga_toner_tex from './assets/common/toner_tex.jpg';
 
 export const SceneManager : {
   scene: Scene;
@@ -172,7 +175,7 @@ const App: React.FC = () => {
     const {
       key,
       model,
-      diffuse_tex,
+      model_diffuse_tex,
       custom_transform,
     } = modelInfo;
 
@@ -201,10 +204,16 @@ const App: React.FC = () => {
     let entireMax : Vector3 | undefined;
     let entireMin : Vector3 | undefined;
 
-    const _tex = diffuse_tex ? await loadTex(diffuse_tex): undefined;
-    const artStrokeMaterial = await prepareStrokeMaterial(_tex);
+    const diffuse_tex = model_diffuse_tex ? await loadTex(model_diffuse_tex): undefined;
 
-    _model.userData['tDiffuseBackup'] = _tex;
+    const toner_tex = await loadTex(manga_toner_tex.default);
+    // repeat
+    toner_tex.wrapS = ClampToEdgeWrapping;
+    toner_tex.wrapT = ClampToEdgeWrapping;
+
+    const artStrokeMaterial = await prepareStrokeMaterial(diffuse_tex, toner_tex);
+
+    _model.userData['tDiffuseBackup'] = diffuse_tex;
 
     // texturing and find out entire bbox
     _model.traverse(child => {
@@ -270,9 +279,12 @@ const App: React.FC = () => {
   };
 
   // Customized Material
-  const prepareStrokeMaterial = async(tex?: Texture) => {
+  const prepareStrokeMaterial = async(diffuse_tex?: Texture, toner_tex?: Texture) => {
     const { vertexShader, fragmentShader } = await makeArtStrokeShader();
-    artStrokeUniforms.tDiffuse.value = tex;
+    artStrokeUniforms.tDiffuse.value = diffuse_tex;
+    artStrokeUniforms.tToner.value = toner_tex;
+    // artStrokeUniforms.uResolution.value = SceneManager.composer.renderer.getSize(new Vector2());
+    // console.log(artStrokeUniforms.uResolution.value);
 
     return new ShaderMaterial({
       vertexShader: vertexShader as string,

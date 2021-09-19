@@ -15,7 +15,7 @@ export interface IModelAssetInfo{
   key: string;
   type: ENUM_MODEL_TYPE,
   model: any,
-  diffuse_tex?: any,
+  model_diffuse_tex?: any,
   normal_map?: any,
   custom_transform?: {
     translate?: Vector3,
@@ -28,7 +28,7 @@ export const ui_goku_rush : IModelAssetInfo = {
   key: 'ui_goku_rush',
   type: ENUM_MODEL_TYPE.FBX,
   model: ui_goku_rush_fbx.default,
-  diffuse_tex: ui_goku_rush_tex.default,
+  model_diffuse_tex: ui_goku_rush_tex.default,
   normal_map: undefined,
   custom_transform: {
     translate: new Vector3(0,-160,-50),
@@ -41,7 +41,7 @@ export const ui_goku_stand : IModelAssetInfo = {
   key: 'ui_goku_stand',
   type: ENUM_MODEL_TYPE.FBX,
   model: ui_goku_stand_fbx.default,
-  diffuse_tex: ui_goku_stand_tex.default,
+  model_diffuse_tex: ui_goku_stand_tex.default,
   normal_map: undefined,
   custom_transform: {
     translate: new Vector3(0, -90, 0),
@@ -54,7 +54,7 @@ export const mustang : IModelAssetInfo = {
   key: 'mustang',
   type: ENUM_MODEL_TYPE.FBX,
   model: mustang_fbx.default,
-  diffuse_tex: undefined,
+  model_diffuse_tex: undefined,
   normal_map: undefined,
   custom_transform: {
     translate: new Vector3(0, -25, 0),

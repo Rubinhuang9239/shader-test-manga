@@ -64,6 +64,9 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   objectShadingFolder.add(artStrokeUniforms.uHighlightBais, 'value', 0.01, 1.00, 0.01).name('Highlight Bais 高光偏差');
   objectShadingFolder.add(artStrokeUniforms.uUseReflect, 'value', true).name('Enable Reflection 反光');
   objectShadingFolder.add(artStrokeUniforms.uReflectBais, 'value', 0.01, 1.00, 0.01).name('Reflection Bais 反光偏差');
+  objectShadingFolder.add(artStrokeUniforms.uUseToner, 'value', false).name('Enable Toner 使用网目纸');
+  objectShadingFolder.add(artStrokeUniforms.uTonerBais, 'value', 0.01, 1.00, 0.01).name('Toner Bais 网目纸偏差');
+  objectShadingFolder.add(artStrokeUniforms.uTonerScale, 'value', 1.0, 6.0, 0.05).name('Toner Scale 网目纸缩放');
   objectShadingFolder.add(artStrokeUniforms.uUseShadowMask, 'value', true).name('Enable Shadow Musk 切线描边遮罩');
   objectShadingFolder.add(artStrokeUniforms.uUseEmission, 'value', true).name('Enable Emission 自发光');
   objectShadingFolder.add(artStrokeUniforms.uUseLight, 'value', true).name('Enable Light Receiving 受光');
