@@ -1,6 +1,6 @@
 // Dependencies
 import React from 'react';
-import { WebGLContainer } from './Style/WebglStyle';
+import { AppContainer, TweakContainer, WebGLContainer } from './Style/WebglStyle';
 import {
   PerspectiveCamera, Scene, WebGLRenderer,
   Mesh,
@@ -75,7 +75,7 @@ export const SceneUtils : {
   modelLib: IModelAssetInfo[];
 } = {
   stats: new Stats(),
-  tweakGUI: new dat.GUI({name: 'Managa-Render-Test', width: 560}),
+  tweakGUI: new dat.GUI({autoPlace: false, name: 'Managa-Render-Test', width: 560}),
   loadedModels: {},
   modelLib: [
     ui_goku_rush,
@@ -87,6 +87,7 @@ export const SceneUtils : {
 const App: React.FC = () => {
 
   const webGLContainer = React.useRef<HTMLDivElement | null>();
+  const tweakContainer = React.useRef<HTMLDivElement | null>();
 
   React.useEffect(()=>{
     if(!webGLContainer.current){ return; }
@@ -114,6 +115,9 @@ const App: React.FC = () => {
     SceneManager.scene.add(dirLight);
 
     // Camera
+    const parentBoundRect = parentElement.getBoundingClientRect();
+    SceneManager.camera.aspect = parentBoundRect.width/parentBoundRect.height;
+    SceneManager.camera.updateProjectionMatrix();
     SceneManager.camera.position.set(0, 40, -180);
     SceneManager.camera.lookAt(0,0,0);
 
@@ -121,7 +125,6 @@ const App: React.FC = () => {
     SceneManager.composer.renderer.setClearColor(0x555555);
     // SceneManager.composer.renderer.autoClear = false;
 
-    const parentBoundRect = parentElement.getBoundingClientRect();
     SceneManager.composer.setSize(parentBoundRect.width, parentBoundRect.height);
     SceneManager.composer.renderer.setSize(parentBoundRect.width, parentBoundRect.height);
     SceneManager.composer.renderer.setPixelRatio(window.devicePixelRatio);
@@ -333,7 +336,10 @@ const App: React.FC = () => {
 
   // Return JSX Container
   return (
-    <WebGLContainer className='webgl-container' ref={ref=>(webGLContainer.current = ref)} />
+    <AppContainer>
+      <WebGLContainer className='webgl-container' ref={ref=>(webGLContainer.current = ref)} />
+      <TweakContainer className='tweak-container' ref={ref=>(tweakContainer.current = ref)}/>
+    </AppContainer>
   );
 };
 

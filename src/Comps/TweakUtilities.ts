@@ -29,7 +29,7 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   testModelsFolder.open();
 
   const postProcessingFolder = SceneUtils.tweakGUI.addFolder('Post Processing 后期渲染');
-  postProcessingFolder.add(artOutlineUniforms.uDepthOnly, 'value', true).name('Show Depth Only 只显示深度数据').onChange(val=>{
+  postProcessingFolder.add(artOutlineUniforms.uDepthOnly, 'value', true).name('📏 Show Depth Only 只显示深度数据').onChange(val=>{
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uDepthOnly.value = val;
   });
@@ -37,11 +37,11 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uDepthRez.value = val;
   });
-  postProcessingFolder.add(artOutlineUniforms.uUseRenderPass, 'value', true).name('Enable Render Pass 基础渲染周期').onChange(val=>{
+  postProcessingFolder.add(artOutlineUniforms.uUseRenderPass, 'value', true).name('📸 Enable Render Pass 基础渲染周期').onChange(val=>{
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uUseRenderPass.value = val;
   });
-  postProcessingFolder.add(artOutlineUniforms.uUseOutline, 'value', true).name('Enable Outline 深度边缘').onChange(val=>{
+  postProcessingFolder.add(artOutlineUniforms.uUseOutline, 'value', true).name('🔲 Enable Outline 深度边缘').onChange(val=>{
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uUseOutline.value = val;
   });
@@ -57,19 +57,19 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   postProcessingFolder.open();
 
   const objectShadingFolder = SceneUtils.tweakGUI.addFolder('Object Shading 物体着色器');
-  objectShadingFolder.add(artStrokeUniforms.uUseDiffuse, 'value', true).name('Enable Diffuse 底色贴图');
-  objectShadingFolder.add(artStrokeUniforms.uUseShadow, 'value', true).name('Enable Tangent Shadow 切线阴影描边');
+  objectShadingFolder.add(artStrokeUniforms.uUseDiffuse, 'value', true).name('🗺 Enable Diffuse 底色贴图');
+  objectShadingFolder.add(artStrokeUniforms.uUseShadow, 'value', true).name('💎 Enable Tangent Shadow 切线阴影描边');
   objectShadingFolder.add(artStrokeUniforms.uShadowBais, 'value', 0.01, 1.00, 0.01).name('Tangent Shadow Bais 切线偏差');
-  objectShadingFolder.add(artStrokeUniforms.uUseHighlight, 'value', true).name('Enable Highlight 高光');
+  objectShadingFolder.add(artStrokeUniforms.uUseHighlight, 'value', true).name('🌟 Enable Highlight 高光');
   objectShadingFolder.add(artStrokeUniforms.uHighlightBais, 'value', 0.01, 1.00, 0.01).name('Highlight Bais 高光偏差');
-  objectShadingFolder.add(artStrokeUniforms.uUseReflect, 'value', true).name('Enable Reflection 反光');
+  objectShadingFolder.add(artStrokeUniforms.uUseReflect, 'value', true).name('🪞 Enable Reflection 反光');
   objectShadingFolder.add(artStrokeUniforms.uReflectBais, 'value', 0.01, 1.00, 0.01).name('Reflection Bais 反光偏差');
-  objectShadingFolder.add(artStrokeUniforms.uUseToner, 'value', false).name('Enable Toner 使用网目纸');
+  objectShadingFolder.add(artStrokeUniforms.uUseToner, 'value', false).name('🏁 Enable Toner 使用网目纸');
   objectShadingFolder.add(artStrokeUniforms.uTonerBais, 'value', 0.01, 1.00, 0.01).name('Toner Bais 网目纸偏差');
   objectShadingFolder.add(artStrokeUniforms.uTonerScale, 'value', 1.0, 6.0, 0.05).name('Toner Scale 网目纸缩放');
-  objectShadingFolder.add(artStrokeUniforms.uUseShadowMask, 'value', true).name('Enable Shadow Musk 切线描边遮罩');
-  objectShadingFolder.add(artStrokeUniforms.uUseEmission, 'value', true).name('Enable Emission 自发光');
-  objectShadingFolder.add(artStrokeUniforms.uUseLight, 'value', true).name('Enable Light Receiving 受光');
+  objectShadingFolder.add(artStrokeUniforms.uUseShadowMask, 'value', true).name('🎭 Enable Shadow Musk 切线描边遮罩');
+  objectShadingFolder.add(artStrokeUniforms.uUseEmission, 'value', true).name('✨ Enable Emission 自发光');
+  objectShadingFolder.add(artStrokeUniforms.uUseLight, 'value', true).name('💡 Enable Light Receiving 受光');
   objectShadingFolder.open();
 
   const helperFolder = SceneUtils.tweakGUI.addFolder('Helpers 辅助工具');
