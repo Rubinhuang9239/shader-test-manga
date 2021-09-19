@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { SceneManager, SceneUtils } from "../App";
 import { IModelAssetInfo } from "../Resource/Models";
 import { artOutlineUniforms } from "../Shader/art_outline_shader";
@@ -10,6 +11,13 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   SceneUtils.tweakGUI.domElement.style.right = '0px';
   SceneUtils.tweakGUI.domElement.style.left = 'auto';
 
+  const sceneConfigFolder = SceneUtils.tweakGUI.addFolder('Scene Configs 场景设置');
+  sceneConfigFolder.addColor({ rendererClearColor: (SceneManager.composer.renderer.getClearColor(new Color())).getHex()}, 'rendererClearColor')
+  .name('Scene Background Color').onChange(val=>{
+    SceneManager.composer.renderer.setClearColor(new Color(val));
+  });
+  sceneConfigFolder.open();
+
   const testModelsFolder = SceneUtils.tweakGUI.addFolder('Test Models 测试模型');
   testModelsFolder.add(
     { modelKey: SceneUtils.modelLib[0]?.key },
@@ -21,6 +29,14 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   testModelsFolder.open();
 
   const postProcessingFolder = SceneUtils.tweakGUI.addFolder('Post Processing 后期渲染');
+  postProcessingFolder.add(artOutlineUniforms.uDepthOnly, 'value', true).name('Show Depth Only 只显示深度数据').onChange(val=>{
+    if(!SceneManager.artOutlinePass){ return; }
+    SceneManager.artOutlinePass.uniforms.uDepthOnly.value = val;
+  });
+  postProcessingFolder.add(artOutlineUniforms.uDepthRez, 'value', 0.0, 0.5, 0.01).name('Depth Resolution 深度分辨率').onChange(val=>{
+    if(!SceneManager.artOutlinePass){ return; }
+    SceneManager.artOutlinePass.uniforms.uDepthRez.value = val;
+  });
   postProcessingFolder.add(artOutlineUniforms.uUseRenderPass, 'value', true).name('Enable Render Pass 基础渲染周期').onChange(val=>{
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uUseRenderPass.value = val;
@@ -33,9 +49,9 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
     if(!SceneManager.artOutlinePass){ return; }
     SceneManager.artOutlinePass.uniforms.uOutlineWeight.value = val;
   });
-  postProcessingFolder.add(artOutlineUniforms.uDepthRez, 'value', 0.0, 0.5, 0.01).name('Depth Resolution 深度分辨率').onChange(val=>{
+  postProcessingFolder.add(artOutlineUniforms.uOutlineEasingParam, 'value', 1.0, 6.0, 0.1).name('Outline W Easing 描边粗细线性平滑参数').onChange(val=>{
     if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uDepthRez.value = val;
+    SceneManager.artOutlinePass.uniforms.uOutlineEasingParam.value = val;
   });
   
   postProcessingFolder.open();
@@ -52,6 +68,16 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   objectShadingFolder.add(artStrokeUniforms.uUseEmission, 'value', true).name('Enable Emission 自发光');
   objectShadingFolder.add(artStrokeUniforms.uUseLight, 'value', true).name('Enable Light Receiving 受光');
   objectShadingFolder.open();
+
+  const helperFolder = SceneUtils.tweakGUI.addFolder('Helpers 辅助工具');
+  helperFolder.add({useVertexNormalHelper: false}, 'useVertexNormalHelper', false)
+  .name('Show Vertex Normal Helper 显示法向量').onChange(val=>{
+    const cntModel = SceneManager.displayGroup.children[0];
+    val?
+    cntModel?.add(cntModel.userData.vertNormalHelper):
+    cntModel?.remove(cntModel.userData.vertNormalHelper);
+  });
+  helperFolder.open();
 
   // uEmissionColor: {value: new Vector3(0.0, 0.0, 0.0)},
   // uShadowColor: {value: new Vector3(1.0, 1.0, 1.0)},

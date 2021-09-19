@@ -29,7 +29,6 @@ import { Asset3DLoadMeter, loadFBX, loadTex } from './WebGLComps/WebGLUtils';
 import { makeArtOutlineShader } from './Shader/art_outline_shader';
 import { makeArtStrokeShader, artStrokeUniforms } from './Shader/art_stroke_shader';
 import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper';
-import { VertexTangentsHelper } from 'three/examples/jsm/helpers/VertexTangentsHelper';
 import Stats from 'stats.js';
 import dat from 'dat.gui';
 
@@ -260,8 +259,11 @@ const App: React.FC = () => {
     SceneUtils.loadedModels[key] = _model;
 
     // vertex normal helper
-    // const vertNormalHelper = new VertexNormalsHelper(_model.children[0], 4.0, 0x447799);
-    // _model.add(vertNormalHelper);
+    if(_model.children[0] && _model.children[0].type==='Mesh'){
+      const vertNormalHelper = new VertexNormalsHelper(_model.children[0], 2.0, 0x447799);
+      _model.userData['vertNormalHelper'] = vertNormalHelper;
+      //_model.add(vertNormalHelper);
+    }
 
     // add to scene
     SceneManager.displayGroup.add(_model);
@@ -317,7 +319,7 @@ const App: React.FC = () => {
     SceneUtils.stats.end();
   }
 
-  // Return JSX
+  // Return JSX Container
   return (
     <WebGLContainer className='webgl-container' ref={ref=>(webGLContainer.current = ref)} />
   );

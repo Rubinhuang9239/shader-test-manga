@@ -5,6 +5,9 @@ precision mediump float;
 #include <packing>
 
 // io
+uniform bool uDepthOnly;
+// 深度分辨率参数
+uniform float uDepthRez;
 uniform bool uUseRenderPass;
 uniform bool uUseOutline;
 
@@ -16,11 +19,10 @@ uniform sampler2D tDepth;
 // Camera Near Far
 uniform float uNear;
 uniform float uFar;
-// 深度分辨率参数
-uniform float uDepthRez;
-// 秒边粗细
+// 描边粗细基数
 uniform float uOutlineWeight;
-
+// 描边粗细线性映射参数
+uniform float uOutlineEasingParam;
 
 varying vec2 vUv;
 
@@ -45,10 +47,20 @@ float map(float x, float a1, float a2, float b1, float b2) {
 }
 
 // 缓入缓出 平方 平滑
-float easeInOutQuad(float pos) {
-  if ((pos/=0.5f) < 1.0f) return 0.5f * pow(pos,2.0f);
-  return -0.5f * ((pos-=2.0f)*pos - 2.0f);
+float easeInOut(float pos) {
+  if ((pos/=0.5f) < 1.0f) return 0.5f * pow(pos, uOutlineEasingParam);
+  return -0.5f * (pow(pos-2.0f, uOutlineEasingParam) - 2.0f);
 }
+
+// float easeIn(float pos) {
+//   if ((pos/=0.5f) < 1.0f) return 0.5f * pow(pos,2.0f);
+//   return -0.5f * ((pos-=2.0f)*pos - 2.0f);
+// }
+
+// float easeOut(float pos) {
+//   if ((pos/=0.5f) < 1.0f) return 0.5f * pow(pos,2.0f);
+//   return -0.5f * ((pos-=2.0f)*pos - 2.0f);
+// }
 
 float visDepthFall() {
   // current pixel depth 当前像素对应深度
@@ -56,7 +68,7 @@ float visDepthFall() {
 
   // depth effect 线条韵味之 近粗远细
   float easedDpethSampleInterv = depthSampleInterv * uOutlineWeight * map(
-    easeInOutQuad(1.0f - cutDepth),
+    easeInOut(1.0f - cutDepth),
     0.07f, 1.0f,
     0.25f, 2.4f
   );
@@ -86,14 +98,21 @@ float visDepthFall() {
   return outline;
 }
 
+void visDepth(){
+  // viz out depth map
+  float depth = readDepth(tDepth, vUv);
+  vec3 color = vec3(1.0f-depth);
+  gl_FragColor = vec4(color, 1.0f);
+} 
+
 // 主循环
 void main() {
 
-  // 可视化深度
-  // viz out depth map
-  // float depth = readDepth(tDepth, vUv);
-  // vec3 color = vec3(1.0f-depth);
-  // gl_FragColor = vec4(color, 1.0f);
+  if(uDepthOnly){
+    // 可视化深度
+    visDepth();
+    return;
+  }
 
   // 可视化深度断层
   float outline = visDepthFall();
