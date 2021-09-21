@@ -26,6 +26,7 @@ import {
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Asset3DLoadMeter, loadFBX, loadTex } from './WebGLComps/WebGLUtils';
 import { makeArtOutlineShader } from './Shader/art_outline_shader';
@@ -52,6 +53,7 @@ export const SceneManager : {
   depthTarget?: WebGLRenderTarget;
   renderPass?: RenderPass;
   artOutlinePass?: ShaderPass;
+  uBloomPass?: UnrealBloomPass;
 } = {
   scene: new Scene(),
   camera: new PerspectiveCamera(70, 4/3, 0.1, 1600),
@@ -66,6 +68,7 @@ export const SceneManager : {
   depthTarget: undefined,
   renderPass: undefined,
   artOutlinePass: undefined,
+  uBloomPass: undefined,
 };
 
 export const SceneUtils : {
@@ -302,11 +305,17 @@ const App: React.FC = () => {
   // Extra Passes
 
   const addShaderPasses = async () => {
+    // art line pass
     const artOutlineShader = await makeArtOutlineShader();
     SceneManager.artOutlinePass = new ShaderPass(artOutlineShader, 'tDiffuse');
     SceneManager.artOutlinePass.uniforms.uNear.value = SceneManager.camera.near;
     SceneManager.artOutlinePass.uniforms.uFar.value = SceneManager.camera.far;
     SceneManager.composer.addPass(SceneManager.artOutlinePass);
+
+    // bloom pass
+    SceneManager.uBloomPass = new UnrealBloomPass(new Vector2(64,64), 0.4, 0.10, 0.75);
+    SceneManager.uBloomPass.enabled = false;
+    SceneManager.composer.addPass(SceneManager.uBloomPass);
   };
 
   // Render

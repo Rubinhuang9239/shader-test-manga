@@ -29,30 +29,58 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   testModelsFolder.open();
 
   const postProcessingFolder = SceneUtils.tweakGUI.addFolder('Post Processing 后期渲染');
-  postProcessingFolder.add(artOutlineUniforms.uDepthOnly, 'value', true).name('📏 Show Depth Only 只显示深度数据').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uDepthOnly.value = val;
-  });
-  postProcessingFolder.add(artOutlineUniforms.uDepthRez, 'value', 0.0, 0.5, 0.01).name('Depth Resolution 深度分辨率').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uDepthRez.value = val;
-  });
-  postProcessingFolder.add(artOutlineUniforms.uUseRenderPass, 'value', true).name('📸 Enable Render Pass 基础渲染周期').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uUseRenderPass.value = val;
-  });
-  postProcessingFolder.add(artOutlineUniforms.uUseOutline, 'value', true).name('🔲 Enable Outline 深度边缘').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uUseOutline.value = val;
-  });
-  postProcessingFolder.add(artOutlineUniforms.uOutlineWeight, 'value', 0.1, 4.0, 0.1).name('Outline Weight 描边粗细').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uOutlineWeight.value = val;
-  });
-  postProcessingFolder.add(artOutlineUniforms.uOutlineEasingParam, 'value', 1.0, 6.0, 0.1).name('Outline W Easing 描边粗细线性平滑参数').onChange(val=>{
-    if(!SceneManager.artOutlinePass){ return; }
-    SceneManager.artOutlinePass.uniforms.uOutlineEasingParam.value = val;
-  });
+
+    const artlinePassFolder = postProcessingFolder.addFolder('Artline 描边 Pass');
+
+    artlinePassFolder.add({enable: true}, 'enable', true).name('🔌 Enable  生效描边').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.enabled = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uDepthOnly, 'value', true).name('📏 Show Depth Only 只显示深度数据').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uDepthOnly.value = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uDepthRez, 'value', 0.0, 0.5, 0.01).name('Depth Resolution 深度分辨率').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uDepthRez.value = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uUseRenderPass, 'value', true).name('📸 Enable Render Pass 基础渲染周期').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uUseRenderPass.value = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uUseOutline, 'value', true).name('🔲 Enable Outline 深度边缘').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uUseOutline.value = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uOutlineWeight, 'value', 0.1, 4.0, 0.1).name('Outline Weight 描边粗细').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uOutlineWeight.value = val;
+    });
+    artlinePassFolder.add(artOutlineUniforms.uOutlineEasingParam, 'value', 1.0, 6.0, 0.1).name('Outline W Easing 描边粗细线性平滑参数').onChange(val=>{
+      if(!SceneManager.artOutlinePass){ return; }
+      SceneManager.artOutlinePass.uniforms.uOutlineEasingParam.value = val;
+    });
+    artlinePassFolder.open();
+
+    const unrealBloomPassFolder = postProcessingFolder.addFolder('Bloom Pass 辉光');
+
+    unrealBloomPassFolder.add({enable: false}, 'enable', true).name('🔌 Enable  生效辉光').onChange(val=>{
+      if(!SceneManager.uBloomPass){ return; }
+      SceneManager.uBloomPass.enabled = val;
+    });
+    unrealBloomPassFolder.add({strength: 0.4}, 'strength', 0.05, 0.9, 0.05).name('Strength  辉光强度').onChange(val=>{
+      if(!SceneManager.uBloomPass){ return; }
+      SceneManager.uBloomPass.strength = val;
+    });
+    unrealBloomPassFolder.add({threshold: 0.75}, 'threshold', 0.4, 1.0, 0.05).name('Strength  辉光临界').onChange(val=>{
+      if(!SceneManager.uBloomPass){ return; }
+      SceneManager.uBloomPass.threshold = val;
+    });
+    unrealBloomPassFolder.add({radius: 0.10}, 'radius', 0.05, 0.5, 0.01).name('Radius  辉光半径').onChange(val=>{
+      if(!SceneManager.uBloomPass){ return; }
+      SceneManager.uBloomPass.radius = val;
+    });
+    unrealBloomPassFolder.open();
   
   postProcessingFolder.open();
 
