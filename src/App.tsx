@@ -9,6 +9,7 @@ import {
   FrontSide,
   AmbientLight,
   DirectionalLight,
+  DirectionalLightHelper,
   WebGLRenderTarget,
   DepthTexture,
   UnsignedShortType,
@@ -54,6 +55,7 @@ export const SceneManager : {
   renderPass?: RenderPass;
   artOutlinePass?: ShaderPass;
   uBloomPass?: UnrealBloomPass;
+  dirLight?: DirectionalLight;
 } = {
   scene: new Scene(),
   camera: new PerspectiveCamera(70, 4/3, 0.1, 1600),
@@ -69,6 +71,7 @@ export const SceneManager : {
   renderPass: undefined,
   artOutlinePass: undefined,
   uBloomPass: undefined,
+  dirLight: undefined,
 };
 
 export const SceneUtils : {
@@ -112,10 +115,13 @@ const App: React.FC = () => {
     const amLight = new AmbientLight(0xFFFFFF, 0.4);
     SceneManager.scene.add(amLight);
 
-    const dirLight = new DirectionalLight(0x6699FF, 1.5);
-    dirLight.target.position.set(0,0,0);
-    dirLight.position.set(200, -100, 0);
-    SceneManager.scene.add(dirLight);
+    SceneManager.dirLight = new DirectionalLight(0x6699FF, 1.5);
+    SceneManager.dirLight.target.position.set(0,0,0);
+    SceneManager.dirLight.position.set(0, 40, 0);
+    
+    const dirLightHelper = new DirectionalLightHelper(SceneManager.dirLight, 48, 0xff9900);
+    SceneManager.dirLight.userData['dirLightHelper'] = dirLightHelper;
+    SceneManager.scene.add(SceneManager.dirLight);
 
     // Camera
     const parentBoundRect = parentElement.getBoundingClientRect();
@@ -296,7 +302,7 @@ const App: React.FC = () => {
       vertexShader: vertexShader as string,
       fragmentShader: fragmentShader as string,
       uniforms: artStrokeUniforms,
-      lights: false,
+      lights: true,
       transparent: false,
       side: FrontSide,
     });
@@ -319,7 +325,7 @@ const App: React.FC = () => {
   };
 
   // Render
-  const renderForDepth = () => {
+  const renderForDepth = (time: number) => {
     if(!SceneManager.depthTarget || !SceneManager.artOutlinePass){return;}
     // set target
     SceneManager.composer.renderer.setRenderTarget(SceneManager.depthTarget)
@@ -331,15 +337,18 @@ const App: React.FC = () => {
     SceneManager.composer.renderer.setRenderTarget(null);
   }
 
-  const renderDiffuse = () => {
+  const renderDiffuse = (time: number) => {
+    const scaledTime = time * 0.0005;
+    SceneManager.dirLight?.position.set(Math.sin(scaledTime)*140.0, 40, Math.cos(scaledTime)*140.0);
+    SceneManager.dirLight?.userData['dirLightHelper']?.update();
     SceneManager.composer.render();
   }
 
   const animate = (time: number) => {
     requestAnimationFrame(animate);
     SceneUtils.stats.begin();
-    renderForDepth();
-    renderDiffuse();
+    renderForDepth(time);
+    renderDiffuse(time);
     SceneUtils.stats.end();
   }
 

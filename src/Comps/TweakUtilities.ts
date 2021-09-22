@@ -97,7 +97,10 @@ export const initTweakUtils = (element?: HTMLElement, loadSceneObjects?: (modelI
   objectShadingFolder.add(artStrokeUniforms.uTonerScale, 'value', 1.0, 6.0, 0.05).name('Toner Scale 网目纸缩放');
   objectShadingFolder.add(artStrokeUniforms.uUseShadowMask, 'value', true).name('🎭 Enable Shadow Musk 切线描边遮罩');
   objectShadingFolder.add(artStrokeUniforms.uUseEmission, 'value', true).name('✨ Enable Emission 自发光');
-  objectShadingFolder.add(artStrokeUniforms.uUseLight, 'value', true).name('💡 Enable Light Receiving 受光');
+  objectShadingFolder.add(artStrokeUniforms.uUseDirLight, 'value', false).name('💡 Enable Light Receiving 受光').onChange(val=>{
+    const helper = SceneManager.dirLight?.userData['dirLightHelper'];
+    val ? SceneManager.scene.add(helper) : SceneManager.scene.remove(helper);
+  });
   objectShadingFolder.open();
 
   const helperFolder = SceneUtils.tweakGUI.addFolder('Helpers 辅助工具');
